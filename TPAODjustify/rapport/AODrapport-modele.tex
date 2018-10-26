@@ -1,0 +1,196 @@
+\documentclass[a4paper,10pt,french]{article}
+\newcounter{question}%[section]
+\newcounter{subquestion}%[section]
+\newcommand{\question}{%
+  \setcounter{subquestion}{0}
+  \refstepcounter{question}%
+  \paragraph{Question \thequestion}%
+}
+
+% Préambule; packages qui peuvent être utiles
+   \RequirePackage[T1]{fontenc}        % 
+   \RequirePackage{babel,indentfirst}  % Pour les césures correctes,
+                                       % et pour indenter au début de chaque paragraphe
+   \RequirePackage[utf8]{inputenc}   % Pour pouvoir utiliser directement les accents
+                                     % et autres caractères français
+   \RequirePackage{lmodern,tgpagella} % Police de caractères
+   \textwidth 17cm \textheight 25cm \oddsidemargin -0.24cm % Définition taille de la page
+   \evensidemargin -1.24cm \topskip 0cm \headheight -1.5cm % Définition des marges
+   \RequirePackage{latexsym}                  % Symboles
+   \RequirePackage{amsmath}                   % Symboles mathématiques
+   \RequirePackage{tikz}   % Pour faire des schémas
+   \RequirePackage{graphicx} % Pour inclure des images
+   \RequirePackage{listings} % pour mettre des listings
+% Fin Préambule; package qui peuvent être utiles
+
+\title{Rapport de TP 4MMAOD : Justification optimale de texte}
+\author{
+NOM Prénom étudiant$_1$ (groupe étudiant$_1$) 
+\\ NOM Prénom étudiant$_2$ (groupe étudiant$_2$) 
+}
+
+\begin{document}
+
+\maketitle
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{\em Préambule}
+{\em Ce patron de rapport est donné à titre d'exemple pour répondre aux questions 4, 5 et 6 de l'énoncé.
+Vous pouvez soit compléter ce patron (complètement ou partiellement selon les résultats fournis par votre programme)
+soit rédiger votre propre rapport (qui ne doit pas excéder 2 à 3 pages). Dans tous les cas l'évaluation suit
+le barème indiqué ci-dessous.
+\begin{itemize} 
+   \item Compléter ce patron de rapport en supprimant toutes les phrases en italique qui ne doivent pas apparaître dans le rapport pdf.
+   \item Le rapport doit tenir sur 2 à 3 pages au maximum.
+   \item Barème (sur 20 points) : Programme=4 pts ; Tests=10 points; Rapport= 6 points = 5 points + {\bf 1 point} pour la qualité globale du rapport\,: présentation, concision et clarté de l'argumentation.
+   \item Détail du barème du programme sur 4 points :  lisibilité du code=1 point; commentaires/doxygen=1 point; 
+      efficacité de la programmation=1 point; gestion de la mémoire=1 point (mmap, allocation et libération)
+\end{itemize}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Principe de notre  programme (1 point)}
+{\em Mettre ici une explication brève du principe de votre programme en  précisant la méthode implantée (récursive, itérative) et les
+choix d'implanattaion effectués (valeurs mémorisées, lecture du fichier (mmap?), écriture, etc).
+\\
+} 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Analyse du coût théorique (1.5 points)}
+{\em Donner ici l'analyse du coût théorique de votre programme en fonction du nombre $n$ de caractères, du nombre $m$ de mots et de
+la longueur $L$ d'une ligne.
+ Pour chaque coût, donner la formule qui le caractérise (en justifiant brièvement pourquoi cette formule correspond à votre programme), 
+ puis l'ordre du coût en notation $\Theta$ de préférence, sinon $O$.}
+
+\noindent{NB: Le travail (i.e. nombre d'opérations) est mesuré en nombre  de comparaisons des coûts de justification (dans le calcul du Min de l'équation de Bellman).}
+
+  \subsection{Nombre  d'opérations (comparaions/min)  en pire cas\,: }
+    \paragraph{Justification\,: }
+%    {\em La justification peut être par exemple de la forme: \\ 
+%       "Le programme itératif contient les boucles $k_1=...$, $k_2= ...$ etc correspondant à la somme 
+%      $$C(n_1, n_2, c_1, c_2) = \sum_{k_1=...}^{...} ... \sum ... + \sum_{i=...}^{...} ...$$ 
+%      somme que nous avons calculée (ou majorée) par la technique de  ... " \\
+%      ou  encore\,:  \\
+%      "les appels récursifs du programme permettent de modéliser son coût par le système d'équations aux récurrences 
+%      $$C(k_1, k_2) = ...  \mbox{~avec~les~conditions~initiales~....~} $$
+%      Le coût indiqué est obtenu en résolvant ce système par la méthode de  .... "
+%    } 
+  \subsection{Place mémoire requise\,: }
+    \paragraph{Justification\,: }
+
+  \subsection{Nombre de défauts de cache sur le modèle CO\,:}
+    \paragraph{Justification\,: }
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Compte rendu d'expérimentation (2.5 points)}
+  \subsection{Description de la machine et conditions expérimentalesi (0.5 point) }
+     {\em  Décrire les conditions permettant la reproductibilité des mesures. 
+      \\ Décrire la machine utilisée pour les tests (par exemple {\tt pcserveur.ensimag.fr} ou une autre machine auquel cas indiquer processeur et sa fréquence, la mémoire, le système d'exploitation). \\
+      Préciser si la machine était monopolisée pour un test ou si 
+       d'autres processus ou utilisateurs étaient en cours d'exécution.\\
+       Préciser comment les mesures de temps ont été effectuées (fonction appelée, par exemple {\tt getrusage} ou la commande unix {\tt time}) et l'unité de temps; en particulier, 
+       préciser comment les 5 exécutions pour chaque test ont été faites (par exemple si le même test est fait 5 fois de suite, ou si les tests sont alternés entre
+       les mesures, ou exécutés en concurrence etc). 
+       
+     }
+
+  \subsection{Mesures expérimentales (1 point)}
+\noindent    {\em Compléter le tableau suivant par les temps d'exécution 
+              (temps minimum, maximum et moyen sur 5 exécutions)
+mesurés pour les longueurs de ligne ci-dessous sur le benchmark : \\
+{\tt /matieres/4MMAOD6/Benchmark/ALaRechercheDuTempsPerdu-1paragraphe-ISO-8859-1.in } \\
+Seules les mesures pour lesquelles le programme marche doivent être indiquées.
+Si le benchmark ne passe pas, vous pouvez en prendre ou en construire  un autre sur lequel votre programme fonctionne
+et avec des valeurs de $M$ mettant en évidence des défauts de cache éventuels.
+    }
+
+    \begin{figure}[h]
+      \begin{center}
+        \begin{tabular}{|l||r||r|r|r||r||r||}
+          \hline
+          \hline
+            longueur    & valeur    de       & temps     & temps   & temps  & temps & temps \\
+            ligne ($M$) & justification      & elapsed   & elapsed & elapsed& user  & system \\
+                        &                    & min       & max     & moyen  & moyen & moyen \\
+          \hline
+          \hline
+            200  &      &     &     &   &  &  \\
+          \hline
+            400 &      &     &     &   &  &  \\
+          \hline
+            600 &      &     &     &   &  &  \\
+          \hline
+            800 &      &     &     &   &  &  \\
+          \hline
+            1000 &      &     &     &  &  &   \\
+          \hline
+            1200 &      &     &     &  &  &   \\
+          \hline
+            1400 &      &     &     &  &  &   \\
+          \hline
+            1600 &      &     &     &  &  &   \\
+          \hline
+            1800 &      &     &     &  &  &   \\
+          \hline
+            2000 &      &     &     &  &  &   \\
+          \hline
+          \hline
+        \end{tabular}
+        \caption{Mesures des temps minimum, maximum et moyen de 5 exécutions.
+{\em Seules sont indiquées les valeurs de $M$ significatives et pour lesquelles le programme s'exécute sans erreur et en temps raisonnable.} }
+        \label{table-temps}
+      \end{center}
+    \end{figure}
+
+\noindent    {\em Compléter le tableau suivant par les mesures  d'exécution  données 
+pour les longueurs $M$ de ligne ci-dessous 
+par la commande {\em valgrind} : \\
+{\tt 
+valgrind  --tool=cachegrind   ./AODjustify  $<M>$  ALaRechercheDuTempsPerdu-1paragraphe-ISO-8859-1 }
+    }
+
+    \begin{figure}[h]
+      \begin{center}
+        \begin{tabular}{|l||r||r|r|r||}
+          \hline
+          \hline
+            longueur    & \#instructions    & \#défauts  & \#défauts   & \#défauts \\
+            ligne ($M$) & (travail)         & au total   & en lecture  & en écriture \\
+          \hline
+          \hline
+            200  &      &     &     &     \\
+          \hline
+            400 &      &     &     &     \\
+          \hline
+            600 &      &     &     &     \\
+          \hline
+            800 &      &     &     &     \\
+          \hline
+            1000 &      &     &     &     \\
+          \hline
+            1200 &      &     &     &     \\
+          \hline
+            1400 &      &     &     &     \\
+          \hline
+            1600 &      &     &     &     \\
+          \hline
+            1800 &      &     &     &     \\
+          \hline
+            2000 &      &     &     &     \\
+          \hline
+          \hline
+        \end{tabular}
+        \caption{Mesures des défauts de cache avec {\tt valgrind  --tool=cachegrind}.
+{\em Seules sont indiquées les valeurs de $M$ significatives et pour lesquelles {\tt valgrind} s'exécute sans erreur et en temps raisonnable.} }
+        \label{table-cache}
+      \end{center}
+    \end{figure}
+\subsection{Analyse des résultats expérimentaux (1 point)}
+{\em Donner  une réponse justifiée  à la question\,: 
+les  mesures expérimentales correspondent-elles  à l'analyse théorique (nombre d’opérations et défauts de cache) ?
+}
+
+
+\end{document}
+%% Fin mise au format
