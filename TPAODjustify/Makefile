@@ -9,10 +9,9 @@ doc: src/AODjustify.c  # A COMPLETER
 	doxygen src/AODjustify.c
 
 eval: bin/AODjustify
-	#cd ..; source /matieres/4MMAOD6/install/AODjustify-calcul-note.bash # 2&> /tmp/foo
-	cd ..; source /install/AODjustify-calcul-note.bash #
+	cd ..; source /matieres/4MMAOD6/install/AODjustify-calcul-note.bash # 2&> /tmp/foo
 	
-bin/AODjustify: src/AODjustify.c  # A COMPLETER
+bin/AODjustify: src/AODjustify.c
 	$(CC) -o bin/AODjustify src/AODjustify.c
 	# chmod 0111 bin/AODjustify
 
