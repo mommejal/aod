@@ -1,7 +1,7 @@
 /**
  * \file AODjustify.c
  * \brief Programme de justification optimale d'un texte (cf TP AOD 2018-2019).
- * \author
+ * \author Jeremy BAZIN Léonard MOMMEJA
  * \version 0.1
  * \date octobre 2018
  *
@@ -27,9 +27,9 @@
  * Structure pour mémoiser les données.
  */
 struct data{
-    long i;
-    long k;
-    long cout;
+    long long i;
+    long long k;
+    long long cout;
     struct data *next;
 };
 
@@ -51,14 +51,19 @@ void usage(char * error_msg) {
    exit(-1) ;
 }
 
+void fin(long long cout) {
+   fprintf( stderr, "AODjustify CORRECT> %d\n", cout) ;
+   exit(0);
+}
+
 
 /**
  * \brief Calcul le cube d'un nombre
  *
  * \param nombre que l'on veut mettre au cube
- * \return long
+ * \return long long
  */
-long pow3(long a){
+long long pow3(long long a){
     return a*a*a;
 }
 
@@ -88,7 +93,7 @@ void liberation(){
  * \param *cout_ret valeur de retour du cout si déjà enregistré.
  * \return int 1 si il y a déjà eu mémoisation, 0 sinon.
  */
-int memoisation(long i, long *k_ret, long *cout_ret){
+int memoisation(long long i, long long *k_ret, long long *cout_ret){
     struct data *current = first;
     while(current != NULL){
         if(current->i == i){ //Cas ou l'on connait le résultat
@@ -110,12 +115,12 @@ int memoisation(long i, long *k_ret, long *cout_ret){
  * \param *k_ret position du deuxieme retour à la ligne.
  * \return int 1 si c'est une fin de paragraphe, 0 sinon.
  */
-int detection_nouveau_paragraphe(char *in, long i, long *k_ret){
+int detection_nouveau_paragraphe(char *in, long long i, long long *k_ret){
     if (in[i] == '\n'){
         do{
             i++;
             if (in[i] == '\n' && in[i+1]!='\n'){
-                while(in[i+1]==' ' || in[i+1]=='t' || in[i+1]=='\n'){
+                while(in[i+1]==' ' || in[i+1]=='\t' || in[i+1]=='\n'){
                     i++;
                 }
                 *k_ret = i;
@@ -132,13 +137,16 @@ int detection_nouveau_paragraphe(char *in, long i, long *k_ret){
  *
  * \return void
  */
-void ecriture_ligne(char *in, FILE *out, long i, long k, long cout){
-    long size = k-i;
+void ecriture_ligne(char *in, FILE *out, long long i, long long k, long long cout){
+    long long size = k-i;
     int nb_espace = 0;
     int ajout = 0;
 
+    if(in[i] == ' ')
+        i += 1;
+
     for(int j=i; j<k; j++){ //Calcul du nombre d'espace
-        if(in[j] == ' ' || in[j] == '\n')
+        if(in[j] == ' ' || in[j] == '\n' || in[j] == '\t')
             nb_espace ++;
     }
     while(size + nb_espace < M){
@@ -148,7 +156,7 @@ void ecriture_ligne(char *in, FILE *out, long i, long k, long cout){
 
     for(int j=i; j<k; j++){
         char current = in[j];
-        if(current == '\n') //On sait que ce n'est pas la début d'un nouveau paragraphe
+        if(current == '\n' || current == '\t') //On sait que ce n'est pas la début d'un nouveau paragraphe
             current = ' ';
 
         if(current == ' ' && cout != 0){
@@ -175,24 +183,26 @@ void ecriture_ligne(char *in, FILE *out, long i, long k, long cout){
  * \param *cout_ret cout de la meilleur justification
  * \return void
  */
-void optimisation_ligne(char *in, long i, long *k_ret, long *cout_ret){
-    if(memoisation(i, k_ret, cout_ret) == 1) //Si la solution est mémoisée
+void optimisation_ligne(char *in, long long i, long long *k_ret, long long *cout_ret){
+    if(memoisation(i, k_ret, cout_ret) == 1){ //Si la solution est mémoisée
         return;
+    }
 
-    long k = i;
-    long cout_min = pow3(pow3(M));
-    long k_min = i;
+    long long k = i;
+    long long cout_min = pow3(pow3(M));
+    long long k_min = i;
+
     while(k-i < M){
-        long tmp;
+        long long tmp;
+
         if(in[k] == '\0' || detection_nouveau_paragraphe(in, k, &tmp) == 1){ //Si on est à la fin d'un paragraphe
             *k_ret = k;
             *cout_ret = 0;
             return;
         }
 
-
         if(in[k] == ' ' || in[k] == '\n' || in[k] == '\t'){
-            long k_n, cout;
+            long long k_n, cout;
             optimisation_ligne(in, k+1, &k_n, &cout); //Calcul du coup si on arret la ligne à k
             cout += pow3( M - (k-i) );
             if(cout < cout_min){
@@ -202,6 +212,11 @@ void optimisation_ligne(char *in, long i, long *k_ret, long *cout_ret){
         }
 
         k++;
+    }
+
+    if(k == i){ //Il y a un mot trop long long pour la ligne
+        liberation();
+        usage("La taille de la ligne est trop petite pour justifier ce texte");
     }
 
     //Mémoisation de'une nouvelle solution
@@ -235,7 +250,7 @@ int main(int argc, char** argv){
     in = fopen(file_in_path, "r");
     out = fopen(file_out_path, "w");
 
-    //Copy du fichier d'entree en memoire
+    //Copie du fichier d'entree en memoire
     struct stat st;
     stat(file_in_path, &st);
     int size=st.st_size;
@@ -244,63 +259,32 @@ int main(int argc, char** argv){
 
 
     //Programme de justification
-    long i = 0;
-    long k = 0;
-    long cout;
-
-    // Compter le nombre de paragraphes
-    long nb_parag = 0;
-    while (map[i] != '\0'){
-        if (map[i] == '\n'){
-            do{
-            i++;
-            if (map[i] == '\n'){
-                nb_parag++;
-            }
-            }while(map[i]==' ');
-        }
-        else{
-            i++;
-        }
-    }
-    printf("Le nombre de parag est : %i",nb_parag);
-    i = 0;
-    while(map[i] != '\0'){ //Tant que l'on est pas à la du fichier
-        optimisation_ligne(map, i, &k, &cout); //On cherche le dernier espace/retourn à la ligne de fin de ligne
+    long long i = 0;
+    long long k;
+    long long cout_tot = 0;
+    long long cout;
+    while(map[i] != '\0'){ //Tant que l'on est pas à la fin du fichier
+        optimisation_ligne(map, i, &k, &cout); //On cherche le dernier espace retourné à la ligne de fin de ligne
         ecriture_ligne(map, out, i, k, cout); //On écrit la ligne entre le premier et l'espace de fin de ligne
 
-        long tmp;
+        long long tmp;
         if(detection_nouveau_paragraphe(map, k, &tmp) == 1){ //Si c'est la fin d'un paragraphe
+
             k = tmp;
             liberation(); //Pas besoin des donées précedentes
             fputc('\n', out);
-        }
-
-        i = k+1;
-    }
-    // Veriosn Léo
-    /*    for(int comp = 0 ; comp <= nb_parag ; comp++){ //Tant que l'on est pas à la du fichier
-        optimisation_ligne(map, i, &k, &cout); //On cherche le dernier espace/retourn à la ligne de fin de ligne
-        ecriture_ligne(map, out, i, k, cout); //On écrit la ligne entre le premier et l'espace de fin de ligne
-
-        long tmp;
-        if(detection_nouveau_paragraphe(map, k, &tmp) == 1){ //Si c'est la fin d'un paragraphe
-            k = tmp;
-            liberation(); //Pas besoin des donées précedentes
-            fputc('\n', out);
-            fputc('\n', out);
-            i +=2;
-            continue;
+        }else {
+            cout_tot += pow3( M - (k-i) );
         }
 
         i = k;
     }
-    */
     //Libération de la mémoire
     liberation();
 
     //Fermeture des fichiers
     fclose(out);
     fclose(in);
+    fin(cout_tot);
     return 0;
 }
